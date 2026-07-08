@@ -7,14 +7,18 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.notes.ViewModelFactory
+import com.example.notes.factory.ViewModelFactory
 import com.example.notes.database.DatabaseProvider
 import com.example.notes.databinding.FragmentNoteEditorBinding
 import com.example.notes.entity.Note
 import com.example.notes.repository.NoteRepository
 import com.example.notes.viewModel.NoteEditorViewModel
+import kotlinx.coroutines.launch
 
 class NoteEditorFragment : Fragment() {
 
@@ -51,6 +55,10 @@ class NoteEditorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbar.setNavigationOnClickListener {
+            saveAndNavigateUp()
+        }
+
         setupBackPressHandler()
 
         if (noteId != -1) {
@@ -60,19 +68,21 @@ class NoteEditorFragment : Fragment() {
     }
 
     private fun observeNote() {
-        viewModel.noteData.observe(viewLifecycleOwner) { note ->
+        viewLifecycleOwner.lifecycleScope.launch {
 
-            note?.let {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
 
-                // Save original note for comparison
-                originalNote = it
-
-                binding.editTextTitle.setText(it.title)
-                binding.editTextBody.setText(it.description)
+                viewModel.noteById.collect { note ->
+                    note?.let {
+                        // Save original note for comparison
+                        originalNote = it
+                        binding.editTextTitle.setText(it.title)
+                        binding.editTextBody.setText(it.description)
+                    }
+                }
+                }
             }
         }
-    }
-
     private fun setupBackPressHandler() {
 
         val callback = object : OnBackPressedCallback(true) {

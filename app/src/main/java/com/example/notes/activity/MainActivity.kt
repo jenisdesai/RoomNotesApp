@@ -1,4 +1,4 @@
-package com.example.notes
+package com.example.notes.activity
 
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
+import com.example.notes.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : AppCompatActivity() {
@@ -49,4 +50,3 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, callback)
     }
 }
-

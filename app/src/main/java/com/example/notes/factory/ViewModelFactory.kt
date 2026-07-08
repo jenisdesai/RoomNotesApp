@@ -1,9 +1,7 @@
-package com.example.notes
+package com.example.notes.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.notes.repository.NoteRepository
 import com.example.notes.viewModel.NoteEditorViewModel
 import com.example.notes.viewModel.NotesListViewModel

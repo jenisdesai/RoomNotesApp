@@ -1,16 +1,18 @@
 package com.example.notes.fragment
 
-import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notes.R
-import com.example.notes.ViewModelFactory
+import com.example.notes.factory.ViewModelFactory
 import com.example.notes.adapter.NoteAdapter
 import com.example.notes.database.DatabaseProvider
 import com.example.notes.databinding.DialogDeleteNoteBinding
@@ -19,14 +21,15 @@ import com.example.notes.entity.Note
 import com.example.notes.repository.NoteRepository
 import com.example.notes.viewModel.NotesListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 class NotesListFragment : Fragment() {
 
     private var _binding: FragmentNotesListBinding? = null
     private val binding get() = _binding!!
     private val repository by lazy {
-        val databse = DatabaseProvider.getDatabase(requireContext())
-        val dao = databse.noteDao()
+        val database = DatabaseProvider.getDatabase(requireContext())
+        val dao = database.noteDao()
         NoteRepository(dao)
     }
 
@@ -51,7 +54,7 @@ class NotesListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentNotesListBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -61,8 +64,13 @@ class NotesListFragment : Fragment() {
 
         binding.recyclerNotes.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         binding.recyclerNotes.adapter = adapter
-        viewModel.notes.observe(viewLifecycleOwner){ notes->
-            adapter.submitList(notes)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.notes.collect { notes ->
+                    adapter.submitList(notes)
+                }
+            }
         }
 
         binding.fabAddNote.setOnClickListener{

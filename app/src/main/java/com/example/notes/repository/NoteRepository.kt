@@ -1,15 +1,14 @@
 package com.example.notes.repository
 
-import androidx.lifecycle.LiveData
 import com.example.notes.dao.NoteDao
 import com.example.notes.entity.Note
+import kotlinx.coroutines.flow.Flow
 
 
 class NoteRepository(private val noteDao: NoteDao) {
 
-    fun getAllNotes(): LiveData<List<Note>>{
-        return noteDao.getAllNotes()
-    }
+    fun getAllNotes(): Flow<List<Note>> = noteDao.getAllNotes()
+
     suspend fun getNoteById(id: Int): Note?{
         return noteDao.getNoteById(id)
     }
