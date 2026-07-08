@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_icon_badge_shadow.xml
+    Hard-shadow layer behind the circular warning icon badge.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <solid android:color="#1A0E33" />
+
+</shape>

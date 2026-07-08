@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    item_note.xml — Note card for StaggeredGridLayoutManager (2 columns, VERTICAL)
+
+    CONSTRAINT STRATEGY:
+    ────────────────────────────────────────────────────────────────────────────
+    The core fix is switching from a pure top-chain to a top+bottom sandwich:
+
+      tvDescription  → anchored to TOP of parent         (content flows down)
+      tvTitle        → anchored to BOTTOM of parent       (content anchored up from bottom)
+      tvLastEdited   → anchored to BOTTOM of tvTitle      (follows title)
+
+    This means:
+      • The card height is driven by whichever is taller:
+          – tvDescription growing downward from the top, OR
+          – tvTitle + tvLastEdited + their padding growing upward from the bottom
+      • ConstraintLayout's wrap_content resolution picks the larger of the two,
+        so the card is always at least tall enough for both zones to breathe.
+      • minHeight="180dp" on the ConstraintLayout prevents micro-cards when
+        a note has a one-word title and one-line description.
+
+    WHY NOT a vertical chain or Space view:
+      • A packed/spread chain makes all cards the same height — wrong for stagger.
+      • A Space view is a real view node that adds a measure pass — unnecessary.
+      • Margins on tvTitle (top-anchored) only add fixed gap, not adaptive space.
+    ────────────────────────────────────────────────────────────────────────────
+-->
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardNote"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    app:cardBackgroundColor="#E8DEFF"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp">
+
+    <!--
+        minHeight="180dp" — guarantees short notes (1 line description + short
+        title) never collapse into a micro-card that looks broken in the grid.
+        wrap_content still takes over and grows the card naturally beyond 180dp
+        when content is longer.
+    -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="180dp"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp">
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             DESCRIPTION — anchored to TOP of card, grows downward
+             ─ BodyMedium, max 6 lines, comfortable 1.45 line spacing
+             ─ Constrained only to top + horizontal edges
+             ─ Has no bottom constraint → does NOT push the card height alone
+             ═══════════════════════════════════════════════════════════════ -->
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1.45"
+            android:maxLines="6"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textColor="#3D3450"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="In the quiet corners of the digital workspace, clarity becomes our greatest luxury. This space isn't just for data; it's a sanctuary for the fleeting thoughts that define our most creative moments." />
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             TITLE — sits below description with generous top margin
+             ─ HeadlineSmall bold, max 2 lines
+             ─ Top-only constraint — lets wrap_content measure freely
+             ─ minHeight on the ConstraintLayout (below) provides the
+               breathing room on short cards, not a bottom constraint here
+             ═══════════════════════════════════════════════════════════════ -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:letterSpacing="-0.01"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+            android:textColor="#2B1D5E"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription"
+            tools:text="The Architecture of Quiet Thoughts" />
+
+        <!-- ═══════════════════════════════════════════════════════════════
+             LAST EDITED — flows naturally below title
+             ─ LabelSmall, muted purple-gray
+             ─ Card's paddingBottom="20dp" provides floor spacing
+             ═══════════════════════════════════════════════════════════════ -->
+        <TextView
+            android:id="@+id/tvLastEdited"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+            android:textColor="#8C7FA8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            tools:text="Last edited 2h ago" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

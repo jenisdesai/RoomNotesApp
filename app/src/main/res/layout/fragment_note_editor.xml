@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    android:fitsSystemWindows="true">
+
+    <!-- =============================================
+         TOOLBAR
+         Title + visibility controlled programmatically
+         ============================================= -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorSurface"
+        android:elevation="0dp"
+        app:navigationIcon="@drawable/ic_arrow_back_24"
+        app:navigationContentDescription="@string/navigate_up"
+        app:menu="@menu/menu_note_editor"
+        app:title="@string/title_new_note"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
+        app:titleTextColor="?attr/colorOnSurface"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Divider below toolbar -->
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/toolbarDivider"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- =============================================
+         SCROLLABLE CONTENT AREA
+         Allows body to grow and scroll while
+         keeping bottom bar pinned
+         ============================================= -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/toolbarDivider"
+        app:layout_constraintBottom_toTopOf="@id/textViewLastEdited"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp">
+
+            <!-- NOTE TITLE INPUT — bare field, no wrapper -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/hint_note_title"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="3"
+                android:padding="0dp"
+                android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOutline"
+                tools:text="My Note Title" />
+
+            <!-- NOTE BODY INPUT — bare field, expands to fill remaining space -->
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:gravity="top|start"
+                android:hint="@string/hint_note_body"
+                android:inputType="textCapSentences|textMultiLine"
+                android:lineSpacingMultiplier="1.4"
+                android:minLines="14"
+                android:padding="0dp"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textColor="?attr/colorOnSurface"
+                android:textColorHint="?attr/colorOutline"
+                tools:text="Start writing your note here..." />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- =============================================
+         BOTTOM STATUS BAR
+         Pinned to the bottom, no divider above it
+         ============================================= -->
+
+    <TextView
+        android:id="@+id/textViewLastEdited"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginVertical="8dp"
+        android:gravity="center"
+        android:text="@string/label_last_edited_placeholder"
+        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+        android:textColor="?attr/colorOutline"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Last edited 2 minutes ago • 1,240 characters" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

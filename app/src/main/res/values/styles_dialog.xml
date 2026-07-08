@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        CustomAlertDialog
+        ════════════════════════════════════════════════════════════════
+        Strips every piece of Android's default AlertDialog chrome so
+        ONLY dialog_delete_note.xml's own Neubrutalist shapes are visible.
+
+        Without this style, AlertDialog.Builder wraps your custom layout
+        inside a system Material dialog frame — white rounded background,
+        default corner radius, default content insets, default elevation
+        shadow. That system shadow + your hard-shadow drawable stack on
+        top of each other, which is what was making the dialog look wrong.
+
+        windowBackground = @android:color/transparent
+            Removes the system white rounded-rect background entirely.
+            Your dialog_delete_note.xml's own bg_dialog_card.xml shape
+            becomes the only visible background.
+
+        windowMinWidthMajor / windowMinWidthMinor = 0%
+            By default Material dialogs force a minimum width (often
+            ~280dp+ depending on screen). This was likely fighting your
+            paddingHorizontal="28dp" + width_percent="0.44" math on the
+            buttons, causing them to look squeezed or oddly sized.
+            Setting min width to 0% lets YOUR layout's own width logic
+            (match_parent on the outer ConstraintLayout, governed by the
+            dialog window's own width) take full control.
+
+        windowIsFloating = true
+            Keeps it as a centered floating dialog (not full-screen),
+            which is what you want for a confirmation prompt.
+
+        windowContentOverlay = @null
+            Removes a thin default divider/overlay some OEM skins draw
+            between the dialog title area and content area. You have no
+            built-in title bar (setView() with no setTitle()), but this
+            guards against OEM-specific dialog chrome leaking through.
+        ════════════════════════════════════════════════════════════════
+    -->
+    <style name="CustomAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowMinWidthMajor">100%</item>
+        <item name="android:windowMinWidthMinor">100%</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_dialog_hard_shadow.xml
+
+    The solid black layer that sits BEHIND the white dialog card.
+    In NotePad apps, dialogs use Material elevation (soft blurred shadow).
+    Here there is no blur — just a flat black rectangle, offset 6dp right
+    and 6dp down from the card on top of it, creating the signature
+    Neubrutalist "sticker" shadow.
+
+    Used as the background of a wrapper FrameLayout; the actual card
+    (bg_dialog_card.xml) sits on top of it with a negative margin trick
+    in the layout XML (see dialog_delete_note.xml).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#1A0E33" />
+
+    <corners android:radius="20dp" />
+
+</shape>

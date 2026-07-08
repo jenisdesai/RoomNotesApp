@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+    dialog_delete_note.xml
+
+    NEUBRUTALIST DELETE CONFIRMATION DIALOG
+    ════════════════════════════════════════════════════════════════════════
+    Why Neubrutalism (and not Neumorphism / Glassmorphism) for THIS dialog:
+
+    • Neumorphism needs two opposing soft shadows (light + dark) to fake
+      extrusion. Android's native elevation only draws ONE shadow direction,
+      so true neumorphism requires custom Canvas/Paint shadow layers — fragile
+      across OLED dark mode and varying surface colors.
+
+    • Glassmorphism needs RenderEffect.createBlurEffect(), API 31+ only.
+      Below that it degrades to a flat tinted box with no real blur — silently
+      broken on older devices with no visual fallback.
+
+    • Neubrutalism needs none of that. It's flat color + thick stroke + a
+      HARD (non-blurred) offset shadow, which is just a second flat shape
+      drawn behind the first and shifted a few dp. Works identically on
+      every Android version back to API 21. Zero custom drawing code.
+
+    THE HARD-SHADOW TECHNIQUE USED THROUGHOUT THIS FILE:
+    ────────────────────────────────────────────────────────────────────────
+    Every "shadowed" element here is a FrameLayout pair:
+        outer FrameLayout  → background = solid dark shape (the "shadow")
+        inner View/Layout  → background = colored card, with negative
+                              layout_marginEnd / layout_marginBottom pulling
+                              it up-left so the dark shape peeks out exactly
+                              6dp on the bottom-right edge.
+    No elevation, no shadow blur radius, no API version gating.
+
+    DELIBERATE CONTRAST WITH item_note.xml:
+    ────────────────────────────────────────────────────────────────────────
+    item_note.xml          →  soft pastel lavender, 0dp elevation, no
+                               stroke, description-top/title-bottom flow,
+                               rounded 20dp corners, gentle and quiet
+    dialog_delete_note.xml →  thick 3dp purple borders, hard offset
+                               shadows, warm coral accent, icon-led /
+                               headline-center / button-row flow
+    The dialog is INTENTIONALLY texturally different from the note cards —
+    this is a destructive, attention-demanding moment, so it should not
+    feel like "just another lavender card."
+    ════════════════════════════════════════════════════════════════════════
+-->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="28dp"
+    android:paddingVertical="28dp">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         CARD SHADOW + CARD
+         FrameLayout #1 holds the dark shadow shape. FrameLayout #2 (the
+         actual card) sits inside it with negative end/bottom margins so
+         the shadow shows through on the bottom-right edge only.
+         ═══════════════════════════════════════════════════════════════════ -->
+    <FrameLayout
+        android:id="@+id/dialogShadowLayer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dialog_hard_shadow"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:id="@+id/dialogCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/bg_dialog_card"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="24dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- ═══════════════════════════════════════════════════
+                     WARNING ICON BADGE — small hard-shadow circle,
+                     centered, sits above the headline
+                     ═══════════════════════════════════════════════════ -->
+                <FrameLayout
+                    android:id="@+id/iconShadowLayer"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_icon_badge_shadow"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/bg_icon_badge">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/cd_warning_icon"
+                            android:src="@drawable/ic_warning_triangle" />
+
+                    </FrameLayout>
+
+                </FrameLayout>
+
+                <!-- ═══════════════════════════════════════════════════
+                     HEADLINE — "Delete this note?"
+                     Bold, centered, same deep purple as note titles so
+                     the dialog still feels part of the same app
+                     ═══════════════════════════════════════════════════ -->
+                <TextView
+                    android:id="@+id/tvDialogTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="center"
+                    android:text="@string/dialog_delete_title"
+                    android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                    android:textColor="#2B1D5E"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iconShadowLayer" />
+
+                <!-- ═══════════════════════════════════════════════════
+                     NOTE TITLE PREVIEW — shows which note is being
+                     deleted; bound dynamically by Adapter/Fragment.
+                     Quoted style distinguishes it from the headline.
+                     ═══════════════════════════════════════════════════ -->
+                <TextView
+                    android:id="@+id/tvNoteTitlePreview"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textColor="#5B4C7A"
+                    android:textStyle="italic"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvDialogTitle"
+                    tools:text="“The Architecture of Quiet Thoughts”" />
+
+                <!-- ═══════════════════════════════════════════════════
+                     BODY COPY — explains permanence
+                     ═══════════════════════════════════════════════════ -->
+                <TextView
+                    android:id="@+id/tvDialogMessage"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="@string/dialog_delete_message"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="#6B5D87"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvNoteTitlePreview" />
+
+                <!-- ═══════════════════════════════════════════════════
+                     BUTTON ROW — Cancel (lavender) | Delete (coral)
+                     Each button is its own hard-shadow pair, matching
+                     the card's shadow technique at smaller scale.
+                     ═══════════════════════════════════════════════════ -->
+
+                <!-- CANCEL — shadow + face -->
+                <FrameLayout
+                    android:id="@+id/btnCancelShadowLayer"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="26dp"
+                    android:background="@drawable/bg_btn_cancel_shadow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/btnDeleteShadowLayer"
+                    app:layout_constraintHorizontal_chainStyle="spread"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvDialogMessage"
+                    app:layout_constraintWidth_percent="0.44">
+
+                    <FrameLayout
+                        android:id="@+id/btnCancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/bg_btn_cancel"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/action_cancel"
+                            android:textAllCaps="false"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textColor="#2B1D5E"
+                            android:textStyle="bold" />
+
+                    </FrameLayout>
+
+                </FrameLayout>
+
+                <!-- DELETE — shadow + face -->
+                <FrameLayout
+                    android:id="@+id/btnDeleteShadowLayer"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="26dp"
+                    android:background="@drawable/bg_btn_delete_shadow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/btnCancelShadowLayer"
+                    app:layout_constraintTop_toBottomOf="@id/tvDialogMessage"
+                    app:layout_constraintWidth_percent="0.44">
+
+                    <FrameLayout
+                        android:id="@+id/btnDeleteConfirm"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/bg_btn_delete"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/action_delete"
+                            android:textAllCaps="false"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                            android:textColor="#FAF6FF"
+                            android:textStyle="bold" />
+
+                    </FrameLayout>
+
+                </FrameLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </FrameLayout>
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
