@@ -21,17 +21,19 @@ import com.example.notes.entity.Note
 import com.example.notes.repository.NoteRepository
 import com.example.notes.viewModel.NotesListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class NotesListFragment : Fragment() {
 
     private var _binding: FragmentNotesListBinding? = null
     private val binding get() = _binding!!
-    private val repository by lazy {
-        val database = DatabaseProvider.getDatabase(requireContext())
-        val dao = database.noteDao()
-        NoteRepository(dao)
-    }
+
+//    private val repository by lazy {
+//        val database = DatabaseProvider.getDatabase(requireContext())
+//        val dao = database.noteDao()
+//        NoteRepository(dao)
+//    }
 
     private val adapter by lazy {
         NoteAdapter(onClick = { note ->
@@ -46,9 +48,7 @@ class NotesListFragment : Fragment() {
         )
     }
 
-    private val viewModel: NotesListViewModel by viewModels {
-        ViewModelFactory(repository)
-    }
+    private val viewModel: NotesListViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

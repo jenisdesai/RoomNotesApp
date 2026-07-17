@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notes.entity.Note
 import com.example.notes.repository.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NoteEditorViewModel(private val repository: NoteRepository) : ViewModel() {
+@HiltViewModel
+class NoteEditorViewModel @Inject constructor(private val repository: NoteRepository) : ViewModel() {
 
 
     private val _noteById = MutableStateFlow<Note?>(null)

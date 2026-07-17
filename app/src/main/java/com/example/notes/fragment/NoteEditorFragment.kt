@@ -18,23 +18,22 @@ import com.example.notes.databinding.FragmentNoteEditorBinding
 import com.example.notes.entity.Note
 import com.example.notes.repository.NoteRepository
 import com.example.notes.viewModel.NoteEditorViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class NoteEditorFragment : Fragment() {
 
     private var _binding: FragmentNoteEditorBinding? = null
     private val binding get() = _binding!!
 
-    private val repository by lazy {
-        val database = DatabaseProvider.getDatabase(requireContext())
-        val dao = database.noteDao()
-        NoteRepository(dao)
-    }
+//    private val repository by lazy {
+//        val database = DatabaseProvider.getDatabase(requireContext())
+//        val dao = database.noteDao()
+//        NoteRepository(dao)
+//    }
 
-    private val viewModel: NoteEditorViewModel by viewModels {
-        ViewModelFactory(repository)
-    }
-
+    private val viewModel: NoteEditorViewModel by viewModels()
     private val args: NoteEditorFragmentArgs by navArgs()
 
     private val noteId by lazy {

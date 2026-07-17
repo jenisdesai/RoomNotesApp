@@ -3,9 +3,10 @@ package com.example.notes.repository
 import com.example.notes.dao.NoteDao
 import com.example.notes.entity.Note
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
 
-class NoteRepository(private val noteDao: NoteDao) {
+class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
 
     fun getAllNotes(): Flow<List<Note>> = noteDao.getAllNotes()
 

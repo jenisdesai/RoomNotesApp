@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "notes"
 include(":app")
+
