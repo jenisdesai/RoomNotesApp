@@ -12,13 +12,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.notes.R
-import com.example.notes.factory.ViewModelFactory
 import com.example.notes.adapter.NoteAdapter
-import com.example.notes.database.DatabaseProvider
 import com.example.notes.databinding.DialogDeleteNoteBinding
 import com.example.notes.databinding.FragmentNotesListBinding
 import com.example.notes.entity.Note
-import com.example.notes.repository.NoteRepository
 import com.example.notes.viewModel.NotesListViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint

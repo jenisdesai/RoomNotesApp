@@ -12,11 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.notes.factory.ViewModelFactory
-import com.example.notes.database.DatabaseProvider
 import com.example.notes.databinding.FragmentNoteEditorBinding
 import com.example.notes.entity.Note
-import com.example.notes.repository.NoteRepository
 import com.example.notes.viewModel.NoteEditorViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
